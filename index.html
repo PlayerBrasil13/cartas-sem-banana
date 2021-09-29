@@ -17,12 +17,9 @@
       <h1 class="page-title">
         Jogo de cartas
       </h1>
-      <p class="page-subtitle">
-        Escolha o valor mínimo e o valor máximo
       </p>
-      <input type="number" id="numMin">
-      <input type="number" id="numMax">
-      <button type="submit" onclick="desenharCarta(50)">Escolher número aleatório</button>
+      <input type="number" id="pegarIdCarta">
+      <button type="submit" onclick="desenharCarta(document.getElementById('pegarIdCarta').value)">Escolher carta (0 a 107)</button>
       <div class="resultado" id="resultado"></div>
     </div>
     <a href="https://alura.com.br/" target="_blank">

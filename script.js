@@ -27,7 +27,7 @@ function criarCartas() {
 					id: idCarta,
 					nome: String(num),
 					tipo: "numero",
-					cor: cartasCores[num]
+					cor: cartasCores[cor]
 				});
 				idCarta++;
 			}
@@ -40,7 +40,7 @@ function criarCartas() {
 				id: idCarta,
 				nome: "Ø",
 				tipo: "bloquear",
-				cor: cartasCores[num]
+				cor: cartasCores[cor]
 			});
 			idCarta++;
 		}
@@ -52,7 +52,7 @@ function criarCartas() {
 				id: idCarta,
 				nome: "🔃",
 				tipo: "reverter",
-				cor: cartasCores[num]
+				cor: cartasCores[cor]
 			});
 			idCarta++;
 		}
@@ -64,7 +64,7 @@ function criarCartas() {
 				id: idCarta,
 				nome: "+2",
 				tipo: "+2",
-				cor: cartasCores[num]
+				cor: cartasCores[cor]
 			});
 			idCarta++;
 		}
@@ -103,26 +103,26 @@ function embaralhar() {
 	}
 }
 
-function desenharCarta(idCarta, cor) {
-	resultado.innerHTML += `<div class="carta-fundo" style="background: #${cor};">
+function desenharCarta(idCarta) {
+	var corExibicao = cartas[idCarta].cor;
+
+	if (corExibicao == "escolherCor") {
+		corExibicao = "000000"
+	}
+
+	resultado.innerHTML += `<div class="carta-fundo" style="background: #${corExibicao};">
   <div class="carta-retangulo">
-    <div class="carta-conteudo-borda">${idCarta}</div>
-    <div class="carta-conteudo-centro">${idCarta}</div>
-    <div class="carta-conteudo-borda" style="transform: rotate(180deg);">${idCarta}</div>
+    <div class="carta-conteudo-borda">${cartas[idCarta].nome}</div>
+    <div class="carta-conteudo-centro">${cartas[idCarta].nome}</div>
+    <div class="carta-conteudo-borda" style="transform: rotate(180deg);">${cartas[idCarta].nome}</div>
     <div class="carta-losango"></div>
   </div>
 </div>`
 }
 
-desenharCarta("↑↓", "BF8F00");
-desenharCarta("↱↲", "BF8F00");
-desenharCarta("Ø", "005e00");
-desenharCarta("Ø", "00005e");
-desenharCarta("↺", "BF8F00");
-desenharCarta("↻", "BF8F00");
-desenharCarta("Ø", "5e0000");
-desenharCarta("Ø", "BF8F00");
-desenharCarta("", "000000");
+criarCartas();
+
+// desenharCarta(carta);
 
 // 0 1 2 3 4 5 6 7 8 9 +2 +4 🔃 Ø
 // Vermelho: 5e0000
