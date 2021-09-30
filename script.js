@@ -1,8 +1,9 @@
-var semente = parseInt(Math.random() * 11);
-var sementeMax = 2147483647;
+var semente;
 
 var cartas = []; // cartas do baralho
 var cartasCores = ["5e0000", "BF8F00", "005e00", "00005e"]; // Cores das cartas
+
+var jogadores = [];
 
 var baralhoAuxiliar = []; // Baralho ordenado
 var baralhoPrincipal = cartas; // Baralho desordenado
@@ -88,7 +89,7 @@ function criarCartas() {
 			cor: "escolherCor"
 		});
 		idCarta++;
-		}
+	}
 }
 
 function embaralhar() {
@@ -103,7 +104,10 @@ function embaralhar() {
 	}
 }
 
+criarCartas();
+
 function desenharCarta(idCarta) {
+
 	var corExibicao = cartas[idCarta].cor;
 
 	if (corExibicao == "escolherCor") {
@@ -120,7 +124,47 @@ function desenharCarta(idCarta) {
 </div>`
 }
 
-criarCartas();
+function escolherSemente(valor) {
+	valor = parseInt(valor);
+	if (isNaN(valor)) {
+		semente = parseInt(Math.random() * 10801);
+	} else {
+		semente = valor;
+	}
+	semente = semente % 10801;
+	saidaInfo.innerHTML = `<h2>Sua semente é: ${semente}</h2>`;
+	adicionarJogador(1);
+}
+
+function adicionarJogador(numeroJogador) {
+	if (numeroJogador == 1) {
+	entradaInfo.innerHTML = `
+	<button type="submit" onclick="adicionarJogador(${numeroJogador + 1})">Adicionar jogador</button>
+	<button type="submit" onclick="escolherJogador()">Continuar</button><br>
+	<input type="text" id="jogadorNome" placeholder="Jogador ${numeroJogador}" maxlength="18">
+	`;
+	}
+
+	if (document.getElementById("jogadorNome").value != "") {
+		var jogador = {
+			nome: document.getElementById("jogadorNome").value,
+			ePrincipal: false,
+			mao: []
+		}
+		
+		jogadores.push(jogador);
+
+		cartoesJogadores.innerHTML = ""; 
+		for (var idJogador in jogadores) {
+			cartoesJogadores.innerHTML += `<div class="cartaoJogador">${jogadores[idJogador].nome}<br>${jogadores[idJogador].mao.length}</div>`;
+		}
+		entradaInfo.innerHTML = `
+		<button type="submit" onclick="adicionarJogador(${numeroJogador + 1})">Adicionar jogador</button>
+		<button type="submit" onclick="escolherJogador()">Continuar</button><br>
+		<input type="text" id="jogadorNome" placeholder="Jogador ${numeroJogador}" maxlength="18">
+		`;
+	}
+}
 
 // desenharCarta(carta);
 

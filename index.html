@@ -2,33 +2,36 @@
 <html lang="pt">
 
 <head>
-  <meta charset="UTF-8">
-  <title>Jogo de cartas que não funciona :(</title>
-  <link rel="stylesheet" href="./style.css">
+	<meta charset="UTF-8">
+	<title>Jogo de cartas que não funciona :(</title>
+	<link rel="stylesheet" href="./style.css">
 
 </head>
 
 <body>
-  <!-- partial:index.partial.html -->
-  <html>
+	<!-- partial:index.partial.html -->
+	<html>
 
-  <body>
-    <div class="container">
-      <h1 class="page-title">
-        Jogo de cartas
-      </h1>
-      </p>
-      <input type="number" id="pegarIdCarta">
-      <button type="submit" onclick="desenharCarta(document.getElementById('pegarIdCarta').value)">Escolher carta (0 a 107)</button>
-      <div class="resultado" id="resultado"></div>
-    </div>
-    <a href="https://alura.com.br/" target="_blank">
-    </a>
-  </body>
+	<body>
+		<div class="container">
+			<h1 class="page-title">
+				Jogo de cartas
+			</h1>
+			<div id="saidaInfo">
+				<h2>Escolha a semente</h2>
+			</div>
+			<div id="cartoesJogadores" class="caixa-flex"></div>
+			<div id="entradaInfo">
+				<input type="number" id="pegarSemente" placeholder="Deixe em branco para semente aleatória">
+				<button type="submit" onclick="escolherSemente(document.getElementById('pegarSemente').value)">Ok</button>
+			</div>
+			<div class="caixa-flex" id="resultado"></div><br>
+		</div>
+	</body>
 
-  </html>
-  <!-- partial -->
-  <script src="./script.js"></script>
+	</html>
+	<!-- partial -->
+	<script src="./script.js"></script>
 
 </body>
 
