@@ -17,7 +17,7 @@ h2 {
   font-size: 2.5vw;
 }
 
-input {
+.textInput {
   font-size: 4vw;
   text-align: center;
   color:#ffffff;
@@ -54,14 +54,20 @@ button {
 
 .cartaoJogador {
   display: flex;
-  flex-flow: column wrap;
+  flex-flow: row wrap;
   justify-content: space-around;
+  overflow: hidden;
   margin: 2vw;
   background-color: #2c1c1c;
-  font-size: 2vw;
+  font-size: 1.5vw;
   border-radius: 2vw;
   width: 10vw;
   height: 10vw;
+}
+
+.cartaoJogador p {
+  font-size: 1.5vw;
+  margin: auto;
 }
 
 #saidaInfo {

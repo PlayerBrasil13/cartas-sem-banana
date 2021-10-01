@@ -141,7 +141,7 @@ function adicionarJogador(numeroJogador) {
 	entradaInfo.innerHTML = `
 	<button type="submit" onclick="adicionarJogador(${numeroJogador + 1})">Adicionar jogador</button>
 	<button type="submit" onclick="escolherJogador()">Continuar</button><br>
-	<input type="text" id="jogadorNome" placeholder="Jogador ${numeroJogador}" maxlength="18">
+	<input class="textInput" type="text" id="jogadorNome" placeholder="Jogador ${numeroJogador}" maxlength="8">
 	`;
 	}
 
@@ -156,15 +156,69 @@ function adicionarJogador(numeroJogador) {
 
 		cartoesJogadores.innerHTML = ""; 
 		for (var idJogador in jogadores) {
-			cartoesJogadores.innerHTML += `<div class="cartaoJogador">${jogadores[idJogador].nome}<br>${jogadores[idJogador].mao.length}</div>`;
+			cartoesJogadores.innerHTML += `
+			<div class="cartaoJogador">
+			<p class="cartaoJogador">
+			${jogadores[idJogador].nome}<br>${jogadores[idJogador].mao.length}
+			</p>
+			</div>`;
 		}
 		entradaInfo.innerHTML = `
 		<button type="submit" onclick="adicionarJogador(${numeroJogador + 1})">Adicionar jogador</button>
 		<button type="submit" onclick="escolherJogador()">Continuar</button><br>
-		<input type="text" id="jogadorNome" placeholder="Jogador ${numeroJogador}" maxlength="18">
+		<input class="textInput" type="text" id="jogadorNome" placeholder="Jogador ${numeroJogador}" maxlength="8">
 		`;
 	}
 }
+
+function escolherJogador() {
+	saidaInfo.innerHTML = "Quem é você?";
+	entradaInfo.innerHTML = `<button type="submit" onclick="comecarJogo()">Começar Jogo</button>`;
+	cartoesJogadores.innerHTML = `
+		<div class="cartaoJogador">
+			<p class="cartaoJogador">
+				<input type="radio" name="alternativasJogador" value="jogador0" checked="true"><br>
+				Espectador
+			</p>
+		</div>
+	`;
+	for (var idJogador in jogadores) {
+		cartoesJogadores.innerHTML += `
+		<div class="cartaoJogador">
+			<p class="cartaoJogador">
+				<input type="radio" name="alternativasJogador" value="jogador${parseInt(idJogador) + 1}"><br>
+				${jogadores[idJogador].nome}<br>
+				${jogadores[idJogador].mao.length}
+			</p>
+		</div>
+		`
+	}
+}
+
+// jogadores = [
+// 	{
+// 		nome: "Zezinho",
+// 		mao: [],
+// 		ePrincipal: false
+// 	},
+// 	{
+// 		nome: "Claudinho",
+// 		mao: [],
+// 		ePrincipal: false
+// 	},
+// 	{
+// 		nome: "Robinho",
+// 		mao: [],
+// 		ePrincipal: false
+// 	},
+// 	{
+// 		nome: "Inho",
+// 		mao: [],
+// 		ePrincipal: false
+// 	}
+// ]
+
+// escolherJogador();
 
 // desenharCarta(carta);
 
