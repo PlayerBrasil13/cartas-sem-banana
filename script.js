@@ -158,7 +158,7 @@ function adicionarJogador(numeroJogador) {
 		for (var idJogador in jogadores) {
 			cartoesJogadores.innerHTML += `
 			<div class="cartaoJogador">
-			<p class="cartaoJogador">
+			<p class="cartaoJogadorP">
 			${jogadores[idJogador].nome}<br>${jogadores[idJogador].mao.length}
 			</p>
 			</div>`;
@@ -176,7 +176,7 @@ function escolherJogador() {
 	entradaInfo.innerHTML = `<button type="submit" onclick="comecarJogo()">Começar Jogo</button>`;
 	cartoesJogadores.innerHTML = `
 		<div class="cartaoJogador">
-			<p class="cartaoJogador">
+			<p class="cartaoJogadorP">
 				<input type="radio" name="alternativasJogador" value="jogador0" checked="true"><br>
 				Espectador
 			</p>
@@ -185,13 +185,13 @@ function escolherJogador() {
 	for (var idJogador in jogadores) {
 		cartoesJogadores.innerHTML += `
 		<div class="cartaoJogador">
-			<p class="cartaoJogador">
+			<p class="cartaoJogadorP">
 				<input type="radio" name="alternativasJogador" value="jogador${parseInt(idJogador) + 1}"><br>
 				${jogadores[idJogador].nome}<br>
 				${jogadores[idJogador].mao.length}
 			</p>
 		</div>
-		`
+		`;
 	}
 }
 
