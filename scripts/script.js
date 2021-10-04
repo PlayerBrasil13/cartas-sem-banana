@@ -9,8 +9,6 @@ var jogadorPrincipal;
 var baralhoAuxiliar = []; // Baralho da mesa
 var baralhoPrincipal; // Baralho de compras
 
-criarCartas();
-
 function escolherSemente(valor) {
 	valor = parseInt(valor);
 	if (isNaN(valor)) {
@@ -31,7 +29,6 @@ function adicionarJogador(numeroJogador) {
 		<input class="textInput" type="text" id="jogadorNome" placeholder="Jogador ${numeroJogador}" maxlength="8">
 		`;
 	}
-
 	if (document.getElementById("jogadorNome").value != "") {
 		var jogador = {
 			nome: document.getElementById("jogadorNome").value,
@@ -45,8 +42,9 @@ function adicionarJogador(numeroJogador) {
 			cartoesJogadores.innerHTML += `
 			<div class="cartaoJogador">
 			<p class="cartaoJogadorP">
-			${jogadores[idJogador].nome}<br>${jogadores[idJogador].mao.length}
+				${jogadores[idJogador].nome}
 			</p>
+			<p class="cartaoJogadorP">${jogadores[idJogador].mao.length}</p>
 			</div>`;
 		}
 		entradaInfo.innerHTML = `
@@ -79,6 +77,39 @@ function escolherJogador() {
 		</div>
 		`;
 	}
+}
+
+function comecarJogo() {
+	if (!document.getElementsByName("alternativasJogador")[0].checked) {
+		for (var idJogador in jogadores) {
+			if (document.getElementsByName("alternativasJogador")[parseInt(idJogador) + 1].checked) {
+				jogadorPrincipal = idJogador;
+				jogadores[jogadorPrincipal].nome = `<strong>${jogadores[jogadorPrincipal].nome}</strong>`
+			}
+		}
+	}
+
+
+	cartoesJogadores.innerHTML = "";
+	for (var idJogador in jogadores) {
+		cartoesJogadores.innerHTML += `
+		<div class="cartaoJogador">
+		<p class="cartaoJogadorP">
+		${jogadores[idJogador].nome}<br>${jogadores[idJogador].mao.length}
+		</p>
+		</div>`;
+	}
+
+	cartas = criarCartas();
+
+	embaralhar();
+	distribuirCartas();
+
+	jogarCarta(baralhoPrincipal[0].id, baralhoPrincipal);
+
+	semente = 7 * semente % 10801;
+	var jogadorAtual = semente % jogadores.length;
+	jogar(jogadorAtual);
 }
 
 function criarCartas() {
@@ -212,36 +243,6 @@ function desenharCarta(idCarta) {
 	}
 }
 
-function comecarJogo() {
-	if (!document.getElementsByName("alternativasJogador")[0].checked) {
-		for (var idJogador in jogadores) {
-			if (document.getElementsByName("alternativasJogador")[parseInt(idJogador) + 1].checked) {
-				jogadorPrincipal = idJogador;
-			}
-		}
-	}
-
-
-	cartoesJogadores.innerHTML = "";
-	for (var idJogador in jogadores) {
-		cartoesJogadores.innerHTML += `
-		<div class="cartaoJogador">
-		<p class="cartaoJogadorP">
-		${jogadores[idJogador].nome}<br>${jogadores[idJogador].mao.length}
-		</p>
-		</div>`;
-	}
-
-	embaralhar();
-	distribuirCartas();
-
-	jogarCarta(0, baralhoPrincipal);
-
-	semente = 7 * semente % 10801;
-	var jogadorAtual = semente % jogadores.length;
-	jogar(jogadorAtual);
-}
-
 function jogar(idJogador) {
 	var jogadorNome = jogadores[idJogador].nome;
 	var jogadorMao = jogadores[idJogador].mao;
@@ -292,30 +293,12 @@ function procurarCartaPorId(idCarta, ondeProcurar) {
 			cartaEncontrada = carta;
 		}
 	}
-
+	
 	if (cartaEncontrada == null) {
 		saidaInfo.innerHTML = "Carta inválida."
 	} else {
-		jogarCarta(cartaEncontrada, ondeProcurar)
+		jogarCarta(cartaEncontrada, ondeProcurar);
 	}
-}
-
-cartas = criarCartas();
-
-function debug() {
-	escolherSemente(91);
-	document.getElementById("jogadorNome").value = "Zezinho";
-	adicionarJogador(2);
-	document.getElementById("jogadorNome").value = "Claudinho";
-	adicionarJogador(3);
-	document.getElementById("jogadorNome").value = "Otaquinho";
-	adicionarJogador(4);
-	document.getElementById("jogadorNome").value = "Inho";
-	adicionarJogador(5);
-	escolherJogador();
-	jogadorPrincipal = 1;
-	// escolherJogador();
-	// comecarJogo();
 }
 
 // 0 1 2 3 4 5 6 7 8 9 +2 +4 🔃 Ø

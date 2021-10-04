@@ -54,9 +54,9 @@ button {
 
 .cartaoJogador {
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: column wrap;
   justify-content: space-around;
-  overflow: hidden;
+  overflow: visible;
   margin: 2vw;
   background-color: #2c1c1c;
   font-size: 1.5vw;
@@ -67,7 +67,8 @@ button {
 
 .cartaoJogadorP {
   font-size: 1.5vw;
-  margin: auto;
+  margin: 1vw;
+  text-align: center;
 }
 
 .info {
