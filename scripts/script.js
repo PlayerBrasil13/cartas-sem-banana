@@ -65,7 +65,7 @@ function escolherJogador() {
 }
 
 function comecarJogo() {
-	if (!document.getElementsByName("alternativasJogador")[jogadores.length].checked) {
+	if (!document.getElementsByName("alternativasJogador")[0].checked) {
 		for (var idJogador in jogadores) {
 			if (document.getElementsByName("alternativasJogador")[parseInt(idJogador) + 1].checked) {
 				jogadorPrincipal = idJogador;
