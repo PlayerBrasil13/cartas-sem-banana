@@ -4,7 +4,10 @@ var cartas = []; // cartas do baralho
 var cartasCores = ["5e0000", "BF8F00", "005e00", "00005e"]; // Cores das cartas
 
 var jogadores = [];
-var jogadorPrincipal;
+var jogadorPrincipal = NaN;
+var jogadorAtual = NaN;
+
+var rodadaProgressao = 1;
 
 var baralhoAuxiliar = []; // Baralho da mesa
 var baralhoPrincipal; // Baralho de compras
@@ -37,16 +40,8 @@ function adicionarJogador(numeroJogador) {
 
 		jogadores.push(jogador);
 
-		cartoesJogadores.innerHTML = "";
-		for (var idJogador in jogadores) {
-			cartoesJogadores.innerHTML += `
-			<div class="cartaoJogador">
-			<p class="cartaoJogadorP">
-				${jogadores[idJogador].nome}
-			</p>
-			<p class="cartaoJogadorP">${jogadores[idJogador].mao.length}</p>
-			</div>`;
-		}
+		cartoesJogadores.innerHTML = desenharCartoes(false);
+
 		entradaInfo.innerHTML = `
 		<button type="submit" onclick="adicionarJogador(${numeroJogador + 1})">Adicionar jogador</button>
 		<button type="submit" onclick="escolherJogador()">Continuar</button><br>
@@ -60,62 +55,46 @@ function escolherJogador() {
 	entradaInfo.innerHTML = `<button type="submit" onclick="comecarJogo()">Começar Jogo</button>`;
 	cartoesJogadores.innerHTML = `
 		<div class="cartaoJogador">
-		<p class="cartaoJogadorP">
-				<input type="radio" name="alternativasJogador" value="0" checked="true"><br>
+			<p class="cartaoJogadorP">
+				<input type="radio" name="alternativasJogador" value="${jogadores.length}" checked="true">
 				Espectador
 			</p>
 		</div>
 	`;
-	for (var idJogador in jogadores) {
-		cartoesJogadores.innerHTML += `
-		<div class="cartaoJogador">
-			<p class="cartaoJogadorP">
-				<input type="radio" name="alternativasJogador" value="${parseInt(idJogador) + 1}"><br>
-				${jogadores[idJogador].nome}<br>
-				${jogadores[idJogador].mao.length}
-			</p>
-		</div>
-		`;
-	}
+	cartoesJogadores.innerHTML += desenharCartoes(true);
 }
 
 function comecarJogo() {
-	if (!document.getElementsByName("alternativasJogador")[0].checked) {
+	if (!document.getElementsByName("alternativasJogador")[jogadores.length].checked) {
 		for (var idJogador in jogadores) {
 			if (document.getElementsByName("alternativasJogador")[parseInt(idJogador) + 1].checked) {
 				jogadorPrincipal = idJogador;
-				jogadores[jogadorPrincipal].nome = `<strong>${jogadores[jogadorPrincipal].nome}</strong>`
 			}
 		}
 	}
 
+	semente = 7 * semente % 10801;
+	jogadorAtual = semente % jogadores.length;
 
-	cartoesJogadores.innerHTML = "";
-	for (var idJogador in jogadores) {
-		cartoesJogadores.innerHTML += `
-		<div class="cartaoJogador">
-		<p class="cartaoJogadorP">
-		${jogadores[idJogador].nome}<br>${jogadores[idJogador].mao.length}
-		</p>
-		</div>`;
-	}
+	cartoesJogadores.innerHTML = desenharCartoes(false);
 
 	cartas = criarCartas();
 
 	embaralhar();
 	distribuirCartas();
 
-	jogarCarta(baralhoPrincipal[0].id, baralhoPrincipal);
-
-	semente = 7 * semente % 10801;
-	var jogadorAtual = semente % jogadores.length;
 	jogar(jogadorAtual);
+	
+	cartoesJogadores.innerHTML = desenharCartoes(false);
+	for (var maoId in jogadores[jogadorPrincipal].mao) {
+		minhaMao.innerHTML += desenharCarta(maoId, jogadores[jogadorPrincipal].mao);
+	}
 }
 
 function criarCartas() {
 	var idCarta = 0;
 	var cartaCriada = [];
-	// Cria as cartaCriada com número 0
+	// Cria as cartas com número 0
 	for (var cor in cartasCores) {
 		cartaCriada.push({
 			id: idCarta,
@@ -125,7 +104,7 @@ function criarCartas() {
 		});
 		idCarta++;
 	}
-	// Cria as cartaCriada numéricas
+	// Cria as cartas numéricas
 	for (var cor in cartasCores) {
 		for (var i = 0; i < 2; i++) {
 			for (var num = 1; num < 10; num++) {
@@ -139,7 +118,7 @@ function criarCartas() {
 			}
 		}
 	}
-	// Cria as cartaCriada Bloquear
+	// Cria as cartas Bloquear
 	for (var i = 0; i < 2; i++) {
 		for (var cor in cartasCores) {
 			cartaCriada.push({
@@ -151,7 +130,7 @@ function criarCartas() {
 			idCarta++;
 		}
 	}
-	// Cria as cartaCriada Reverter
+	// Cria as cartas Reverter
 	for (var i = 0; i < 2; i++) {
 		for (var cor in cartasCores) {
 			cartaCriada.push({
@@ -163,7 +142,7 @@ function criarCartas() {
 			idCarta++;
 		}
 	}
-	// Cria as cartaCriada +2
+	// Cria as cartas +2
 	for (var i = 0; i < 2; i++) {
 		for (var cor in cartasCores) {
 			cartaCriada.push({
@@ -175,7 +154,7 @@ function criarCartas() {
 			idCarta++;
 		}
 	}
-	// Cria as cartaCriada trocar cor
+	// Cria as cartas trocar cor
 	for (var i = 0; i < 4; i++) {
 		cartaCriada.push({
 			id: idCarta,
@@ -185,7 +164,7 @@ function criarCartas() {
 		});
 		idCarta++;
 	}
-	// Cria as cartaCriada +4
+	// Cria as cartas +4
 	for (var i = 0; i < 4; i++) {
 		cartaCriada.push({
 			id: idCarta,
@@ -217,11 +196,11 @@ function distribuirCartas() {
 	}
 }
 
-function desenharCarta(idCarta) {
+function desenharCarta(idCarta, deOnde) {
 	if (idCarta != undefined) {
-		var cartaCor = cartas[idCarta].cor;
-		var cartaNome = cartas[idCarta].nome;
-		var cartaId = cartas[idCarta].id;
+		var cartaCor = deOnde[idCarta].cor;
+		var cartaNome = deOnde[idCarta].nome;
+		var cartaId = deOnde[idCarta].id;				
 
 		if (cartaCor == "escolherCor") {
 			cartaCor = "000000"
@@ -243,61 +222,132 @@ function desenharCarta(idCarta) {
 	}
 }
 
+function desenharCartoes(comInput) {
+	var desenhar = "";
+	for (var idJogador in jogadores) {
+		desenhar += `<div class="cartaoJogador"`
+
+		if (idJogador == jogadorAtual) {
+			desenhar += `style="box-shadow: inset 0px 0px 2vw 1vw #dd1c1c;">`;
+		} else {
+			desenhar += ">"
+		}
+
+		desenhar += `<p class="cartaoJogadorP">`
+		if (comInput) {
+			desenhar += `<input type="radio" name="alternativasJogador" value="${parseInt(idJogador)}"><br>`
+		}
+
+		if (idJogador == jogadorPrincipal) {
+			desenhar += `<strong>${jogadores[idJogador].nome}</strong><br>`;
+		} else {
+			desenhar += `${jogadores[idJogador].nome}<br>`;
+		}
+
+		desenhar += `
+		${jogadores[idJogador].mao.length}</p>
+		</div>
+		`;
+
+	}
+	return desenhar;
+}
+
 function jogar(idJogador) {
 	var jogadorNome = jogadores[idJogador].nome;
-	var jogadorMao = jogadores[idJogador].mao;
 
 	if (idJogador == jogadorPrincipal) {
 		saidaInfo.innerHTML = `É a sua vez.`;
 		entradaInfo.innerHTML = `
 			<input class="textInput" type="number" id="pegarIdCarta" placeholder="Digite o id da carta que deseja jogar">
-			<button type="submit" onclick="procurarCartaPorId(document.getElementById('pegarIdCarta').value, jogadores[jogadorPrincipal].mao)">Ok</button>
+			<button id="pegarCartaId" type="submit" onclick="procurarCartaPorId()">Ok</button>
+			<button id="comprar" type="submit" onclick="comprarCarta()">Comprar</button>
 		`
 	} else {
 		saidaInfo.innerHTML = `É a vez de ${jogadores[idJogador].nome}.`;
 		entradaInfo.innerHTML = `
-		<input class="textInput" type="number" id="pegarIdCarta" placeholder="Digite o id da carta que ${jogadorNome} falar">
-		<button type="submit" onclick="procurarCartaPorId(document.getElementById('pegarIdCarta').value, ${jogadorMao})">Ok</button>
+			<input class="textInput" type="number" id="pegarIdCarta" placeholder="Digite o id da carta que ${jogadorNome} falar">
+			<button id="pegarCartaId" type="submit" onclick="procurarCartaPorId()">Ok</button>
+			<button id="comprar" type="submit" onclick="comprarCarta()">Comprar</button>
 		`;
 	}
 }
 
 function jogarCarta(idCarta, listaCarta) {
-	for (var maoId in jogadores[jogadorPrincipal].mao) {
-		minhaMao.innerHTML += desenharCarta(jogadores[jogadorPrincipal].mao[maoId].id);
+	var maoPrincipal = [];
+
+	if (!isNaN(jogadorPrincipal)) {
+		maoPrincipal = jogadores[jogadorPrincipal].mao;
 	}
 
-	var cartaValida = false;
-
-	if (baralhoAuxiliar.length == 0) {
-		cartaValida = true;
-	} else if (listaCarta[idCarta].cor == "escolherCor") {
-		cartaValida = true;
-		// escolherCor();
-	} else if (listaCarta[idCarta].cor == baralhoAuxiliar[baralhoAuxiliar.length - 1].cor || listaCarta[idCarta].nome == baralhoAuxiliar[baralhoAuxiliar.length - 1].nome) {
-		cartaValida = true;
-	} else {
-		saidaInfo.innerHTML = "Carta inválida."
+	minhaMao.innerHTML = "";
+	for (var maoId in maoPrincipal) {
+		minhaMao.innerHTML += desenharCarta(maoId, maoPrincipal);
 	}
+	
+	var cartaValida = checarvalidade(idCarta, listaCarta);
 
 	if (cartaValida) {
+		mesa.innerHTML = desenharCarta(idCarta, listaCarta);
 		baralhoAuxiliar.push(listaCarta.splice(idCarta, 1)[0]);
-		mesa.innerHTML = desenharCarta(idCarta);
+		jogadorAtual += rodadaProgressao;
+		jogadorAtual = (jogadorAtual + jogadores.length) % jogadores.length;
+		cartoesJogadores.innerHTML = desenharCartoes(false);
+		jogar(jogadorAtual);
+	} else {
+		saidaInfo.innerHTML = "Carta inválida."
 	}
 }
 
 function procurarCartaPorId(idCarta, ondeProcurar) {
+	if (idCarta == null) {
+		idCarta = document.getElementById("pegarIdCarta").value;
+		ondeProcurar = jogadores[jogadorAtual].mao;
+	}
+	
 	var cartaEncontrada = null;
 	for (var carta in ondeProcurar) {
 		if (ondeProcurar[carta].id == idCarta) {
 			cartaEncontrada = carta;
 		}
 	}
-	
+
 	if (cartaEncontrada == null) {
 		saidaInfo.innerHTML = "Carta inválida."
 	} else {
 		jogarCarta(cartaEncontrada, ondeProcurar);
+	}
+}
+
+function checarvalidade(idCarta, ondeProcurar) {
+	if (
+			baralhoAuxiliar.length == 0 || 
+			ondeProcurar[idCarta].cor == "escolherCor" || 
+			ondeProcurar[idCarta].cor == baralhoAuxiliar[baralhoAuxiliar.length - 1].cor || 
+			ondeProcurar[idCarta].nome == baralhoAuxiliar[baralhoAuxiliar.length - 1].nome
+		) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function comprarCarta() {
+	var haValidas = false;
+	for (var idCarta in jogadores[jogadorAtual].mao) {
+		if (checarvalidade(idCarta, jogadores[jogadorAtual].mao)) {
+			haValidas = true;
+		}
+	}
+
+	if (haValidas) {
+		saidaInfo.innerHTML = "Não é possível comprar cartas, há cartas válidas!"
+	} else {
+		jogadores[jogadorAtual].mao.splice(0, 0, baralhoPrincipal.splice(0, 1)[0]);
+		
+		for (var maoId in jogadores[jogadorAtual].mao) {
+			minhaMao.innerHTML += desenharCarta(maoId, jogadores[jogadorPrincipal].mao);
+		}
 	}
 }
 

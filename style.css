@@ -59,6 +59,7 @@ button {
   overflow: visible;
   margin: 2vw;
   background-color: #2c1c1c;
+  box-shadow: inset 0px 0px 2vw 1vw #5c1c1c;
   font-size: 1.5vw;
   border-radius: 2vw;
   width: 10vw;
