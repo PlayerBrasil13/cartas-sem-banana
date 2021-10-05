@@ -1,4 +1,5 @@
 function debug(num) {
+    saidaInfo.innerHTML = semente;
     switch (num) {
         case 0:
             escolherSemente(35);
