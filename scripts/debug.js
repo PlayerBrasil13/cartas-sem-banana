@@ -1,5 +1,5 @@
 function debug(num) {
-    saidaInfo.innerHTML = semente;
+    
     switch (num) {
         case 0:
             escolherSemente(35);
@@ -25,4 +25,5 @@ function debug(num) {
             break;
     }
     botaoDebug.innerHTML = `<button type="submit" onclick="debug(${num + 1})">DeBuG</button>`
+    saidaInfo.innerHTML = semente;
 }
