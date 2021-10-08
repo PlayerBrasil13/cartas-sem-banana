@@ -12,6 +12,8 @@ var rodadaProgressao = 1;
 var baralhoAuxiliar = []; // Baralho da mesa
 var baralhoPrincipal; // Baralho de compras
 
+var sequenciaComprar = 0;
+
 function escolherSemente(valor) {
 	valor = parseInt(valor);
 	if (isNaN(valor)) {
@@ -28,7 +30,7 @@ function adicionarJogador(numeroJogador) {
 	if (numeroJogador == 1) {
 		entradaInfo.innerHTML = `
 		<button type="submit" onclick="adicionarJogador(${numeroJogador + 1})">Adicionar jogador</button>
-		<button type="submit" onclick="escolherJogador()">Continuar</button><br>
+		<button type="submit" onclick="escolherJogador('comecarJogo()')">Continuar</button><br>
 		<input class="textInput" type="text" id="jogadorNome" placeholder="Jogador ${numeroJogador}" maxlength="8">
 		`;
 	}
@@ -44,7 +46,7 @@ function adicionarJogador(numeroJogador) {
 
 		entradaInfo.innerHTML = `
 		<button type="submit" onclick="adicionarJogador(${numeroJogador + 1})">Adicionar jogador</button>
-		<button type="submit" onclick="escolherJogador()">Continuar</button><br>
+		<button type="submit" onclick="escolherJogador('comecarJogo()')">Continuar</button><br>
 		<input class="textInput" type="text" id="jogadorNome" placeholder="Jogador ${numeroJogador}" maxlength="8">
 		`;
 	}
@@ -76,18 +78,15 @@ function comecarJogo() {
 	semente = 7 * semente % 10801;
 	jogadorAtual = semente % jogadores.length;
 
-	cartoesJogadores.innerHTML = desenharCartoes(false);
-
 	cartas = criarCartas();
 
 	embaralhar();
 	distribuirCartas();
 
-	jogar(jogadorAtual);
-	
-	cartoesJogadores.innerHTML = desenharCartoes(false);
+	jogar();
+
 	for (var maoId in jogadores[jogadorPrincipal].mao) {
-		minhaMao.innerHTML += desenharCarta(maoId, jogadores[jogadorPrincipal].mao);
+		minhaMao.innerHTML += desenharCarta(jogadores[jogadorPrincipal].mao[maoId]);
 	}
 }
 
@@ -182,7 +181,7 @@ function embaralhar() {
 	baralhoAuxiliar = baralhoPrincipal;
 	baralhoPrincipal = [];
 	while (baralhoAuxiliar.length > 0) {
-		semente = 7 * semente % 10801;
+		semente = 991 * semente % 10801;
 		var cartaMovida = semente % (baralhoAuxiliar.length);
 		baralhoPrincipal.push(baralhoAuxiliar.splice(cartaMovida, 1)[0]);
 	}
@@ -196,23 +195,18 @@ function distribuirCartas() {
 	}
 }
 
-function desenharCarta(idCarta, deOnde) {
-	if (idCarta != undefined) {
-		var cartaCor = deOnde[idCarta].cor;
-		var cartaNome = deOnde[idCarta].nome;
-		var cartaId = deOnde[idCarta].id;				
-
-		if (cartaCor == "escolherCor") {
-			cartaCor = "000000"
+function desenharCarta(carta) {
+	if (carta != undefined) {
+		if (carta.cor == "escolherCor") {
+			carta.cor = "000000";
 		}
-
 		return `
-			<div class="carta-fundo" style="background: #${cartaCor};">
+			<div class="carta-fundo" style="background: #${carta.cor};">
 				<div class="carta-retangulo">
-					<div class="carta-conteudo-borda">${cartaNome}</div>
-					<div class="carta-id">${cartaId}</div>
-					<div class="carta-conteudo-centro">${cartaNome}</div>
-					<div class="carta-conteudo-borda" style="transform: rotate(180deg);">${cartaNome}</div>
+					<div class="carta-conteudo-borda">${carta.nome}</div>
+					<div class="carta-id">${carta.id}</div>
+					<div class="carta-conteudo-centro">${carta.nome}</div>
+					<div class="carta-conteudo-borda" style="transform: rotate(180deg);">${carta.nome}</div>
 					<div class="carta-losango"></div>
 				</div>
 			</div>
@@ -253,24 +247,28 @@ function desenharCartoes(comInput) {
 	return desenhar;
 }
 
-function jogar(idJogador) {
-	var jogadorNome = jogadores[idJogador].nome;
+function jogar() {
+	jogadorAtual += rodadaProgressao;
+	jogadorAtual = (jogadorAtual + jogadores.length) % jogadores.length;
 
-	if (idJogador == jogadorPrincipal) {
+	var jogadorNome = jogadores[jogadorAtual].nome;
+
+	if (jogadorAtual == jogadorPrincipal) {
 		saidaInfo.innerHTML = `É a sua vez.`;
 		entradaInfo.innerHTML = `
 			<input class="textInput" type="number" id="pegarIdCarta" placeholder="Digite o id da carta que deseja jogar">
 			<button id="pegarCartaId" type="submit" onclick="procurarCartaPorId()">Ok</button>
-			<button id="comprar" type="submit" onclick="comprarCarta()">Comprar</button>
+			<button id="comprar" type="submit" onclick="comprarCarta(true)">Comprar</button>
 		`
 	} else {
-		saidaInfo.innerHTML = `É a vez de ${jogadores[idJogador].nome}.`;
+		saidaInfo.innerHTML = `É a vez de ${jogadores[jogadorAtual].nome}.`;
 		entradaInfo.innerHTML = `
 			<input class="textInput" type="number" id="pegarIdCarta" placeholder="Digite o id da carta que ${jogadorNome} falar">
 			<button id="pegarCartaId" type="submit" onclick="procurarCartaPorId()">Ok</button>
-			<button id="comprar" type="submit" onclick="comprarCarta()">Comprar</button>
+			<button id="comprar" type="submit" onclick="comprarCarta(true)">Comprar</button>
 		`;
 	}
+	cartoesJogadores.innerHTML = desenharCartoes(false);
 }
 
 function jogarCarta(idCarta, listaCarta) {
@@ -282,32 +280,36 @@ function jogarCarta(idCarta, listaCarta) {
 
 	minhaMao.innerHTML = "";
 	for (var maoId in maoPrincipal) {
-		minhaMao.innerHTML += desenharCarta(maoId, maoPrincipal);
+		minhaMao.innerHTML += desenharCarta(maoPrincipal[maoId]);
 	}
-	
-	var cartaValida = checarvalidade(idCarta, listaCarta);
+
+	var cartaValida = checarvalidade(listaCarta[idCarta]);
 
 	if (cartaValida) {
-		mesa.innerHTML = desenharCarta(idCarta, listaCarta);
+		mesa.innerHTML = desenharCarta(listaCarta[idCarta]);
 		baralhoAuxiliar.push(listaCarta.splice(idCarta, 1)[0]);
-		jogadorAtual += rodadaProgressao;
-		jogadorAtual = (jogadorAtual + jogadores.length) % jogadores.length;
-		cartoesJogadores.innerHTML = desenharCartoes(false);
-		jogar(jogadorAtual);
+
+		if (jogadorAtual == jogadorPrincipal) {
+			minhaMao.innerHTML = ""
+			for (var maoId in jogadores[jogadorPrincipal].mao) {
+				minhaMao.innerHTML += desenharCarta(jogadores[jogadorPrincipal].mao[maoId]);
+			}
+		}
+		funcaoCarta(baralhoAuxiliar[baralhoAuxiliar.length - 1]);
 	} else {
 		saidaInfo.innerHTML = "Carta inválida."
 	}
 }
 
-function procurarCartaPorId(idCarta, ondeProcurar) {
+function procurarCartaPorId(idCarta, listaCarta) {
 	if (idCarta == null) {
 		idCarta = document.getElementById("pegarIdCarta").value;
-		ondeProcurar = jogadores[jogadorAtual].mao;
+		listaCarta = jogadores[jogadorAtual].mao;
 	}
-	
+
 	var cartaEncontrada = null;
-	for (var carta in ondeProcurar) {
-		if (ondeProcurar[carta].id == idCarta) {
+	for (var carta in listaCarta) {
+		if (listaCarta[carta].id == idCarta) {
 			cartaEncontrada = carta;
 		}
 	}
@@ -315,27 +317,41 @@ function procurarCartaPorId(idCarta, ondeProcurar) {
 	if (cartaEncontrada == null) {
 		saidaInfo.innerHTML = "Carta inválida."
 	} else {
-		jogarCarta(cartaEncontrada, ondeProcurar);
+		jogarCarta(cartaEncontrada, listaCarta);
 	}
 }
 
-function checarvalidade(idCarta, ondeProcurar) {
+function checarvalidade(carta) {
+	var cartaMao = carta;
+	var cartaBaralho = baralhoAuxiliar[baralhoAuxiliar.length - 1];
+
 	if (
-			baralhoAuxiliar.length == 0 || 
-			ondeProcurar[idCarta].cor == "escolherCor" || 
-			ondeProcurar[idCarta].cor == baralhoAuxiliar[baralhoAuxiliar.length - 1].cor || 
-			ondeProcurar[idCarta].nome == baralhoAuxiliar[baralhoAuxiliar.length - 1].nome
-		) {
+		baralhoAuxiliar.length == 0 ||
+		baralhoAuxiliar.length == 0 ||
+		baralhoAuxiliar.length == 0 ||
+		baralhoAuxiliar.length == 0 ||
+		baralhoAuxiliar.length == 0 ||
+		baralhoAuxiliar.length == 0 ||
+		baralhoAuxiliar.length == 0 ||
+		(cartaMao.cor == "000000" && sequenciaComprar == 0) ||
+		(cartaMao.cor == cartaBaralho.cor && ((cartaBaralho.nome != "+2" && cartaBaralho.nome != "+4") || sequenciaComprar == 0)) ||
+		cartaMao.nome == cartaBaralho.nome
+	) {
 		return true;
 	} else {
 		return false;
 	}
 }
 
-function comprarCarta() {
-	var haValidas = false;
+function comprarCarta(checar) {
+	if (checar == true) {
+		var haValidas = false;
+	} else {
+		var haValidas = true;
+	}
+
 	for (var idCarta in jogadores[jogadorAtual].mao) {
-		if (checarvalidade(idCarta, jogadores[jogadorAtual].mao)) {
+		if (checarvalidade(jogadores[jogadorAtual].mao[idCarta])) {
 			haValidas = true;
 		}
 	}
@@ -343,13 +359,112 @@ function comprarCarta() {
 	if (haValidas) {
 		saidaInfo.innerHTML = "Não é possível comprar cartas, há cartas válidas!"
 	} else {
-		jogadores[jogadorAtual].mao.splice(0, 0, baralhoPrincipal.splice(0, 1)[0]);
-		
-		for (var maoId in jogadores[jogadorAtual].mao) {
-			minhaMao.innerHTML += desenharCarta(maoId, jogadores[jogadorPrincipal].mao);
+		if (sequenciaComprar == 0) { sequenciaComprar++; }
+		while (sequenciaComprar > 0) {
+			jogadores[jogadorAtual].mao.splice(0, 0, baralhoPrincipal.splice(0, 1)[0]);
+
+			minhaMao.innerHTML = ""
+			for (var maoId in jogadores[jogadorAtual].mao) {
+				minhaMao.innerHTML += desenharCarta(jogadores[jogadorPrincipal].mao[maoId]);
+			}
+
+			sequenciaComprar--;
 		}
+		cartoesJogadores.innerHTML = desenharCartoes(false);
+		jogar();
 	}
 }
+
+function funcaoCarta(carta) {
+	cartaTipo = carta.tipo;
+	cartaNome = carta.nome;
+	switch (cartaTipo) {
+		case "numero":
+			if (cartaNome == "0") {
+				rolarMaos();
+				jogar();
+			} else if (cartaNome == "7") {
+				entradaInfo.innerHTML = `<button type="submit" onclick="trocarMaos()">TrocarMaos</button>`;
+				cartoesJogadores.innerHTML = desenharCartoes(true);
+				document.getElementsByName("alternativasJogador")[jogadorAtual].disabled = true;
+			} else {
+				jogar();
+			}
+			break;
+		case "reverter":
+			jogadorAtual -= 2;
+			rodadaProgressao = rodadaProgressao * (-1);
+			jogar();
+			break;
+		case "bloquear":
+			jogadorAtual += rodadaProgressao;
+			jogar();
+			break;
+		case "trocarCor":
+			escolherCor("nenhuma", carta);
+			break;
+		case "+2":
+			sequenciaComprar += 2;
+			jogar();
+			break;
+		case "+4":
+			sequenciaComprar += 4;
+			escolherCor("nenhuma", carta);
+			break;
+	}
+	//cartoesJogadores.innerHTML = desenharCartoes(false);
+}
+
+function rolarMaos() {
+	var maos = [];
+	for (var mao in jogadores) {
+		maos.push(jogadores[mao].mao);
+	}
+
+	if (rodadaProgressao == 1) {
+		maos.push(maos.splice(0, 1)[0]);
+	} else {
+		maos.splice(0, 0, maos.splice(jogadores.length - 1, 1)[0])
+	}
+
+	for (var mao in jogadores) {
+		jogadores[mao].mao = maos[mao];
+	}
+
+}
+
+function trocarMaos() {
+	var maoMovida = "no";
+	for (var idJogador in jogadores) {
+		if (document.getElementsByName("alternativasJogador")[parseInt(idJogador)].checked) {
+			maoMovida = jogadores[idJogador].mao;
+			jogadores[idJogador].mao = jogadores[jogadorAtual].mao;
+			jogadores[jogadorAtual].mao = maoMovida;
+		}
+	}
+	if (maoMovida != "no") {
+		jogar();
+	}
+}
+
+function escolherCor(corEscolher, cartaEscolher) {
+	if (corEscolher == "nenhuma") {
+		saidaInfo.innerHTML = "Escolha a cor da carta";
+		entradaInfo.innerHTML = "";
+		for (var cor in cartasCores) {
+			cartaEscolher.cor = cartasCores[cor];
+			logConsole(cartasCores[cor])
+			entradaInfo.innerHTML += `<button type="submit" onclick="escolherCor('${cartasCores[cor]}')">${desenharCarta(cartaEscolher)}</button>`;
+		}
+	} else {
+		cartaEscolher = baralhoAuxiliar[baralhoAuxiliar.length - 1];
+		cartaEscolher.cor = corEscolher;
+		mesa.innerHTML = desenharCarta(baralhoAuxiliar[baralhoAuxiliar.length - 1])
+
+		jogar();
+	}
+}
+
 
 // 0 1 2 3 4 5 6 7 8 9 +2 +4 🔃 Ø
 // Vermelho: 5e0000
