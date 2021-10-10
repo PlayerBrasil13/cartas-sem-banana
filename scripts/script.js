@@ -443,6 +443,10 @@ function trocarMaos() {
 		}
 	}
 	if (maoMovida != "no") {
+		minhaMao.innerHTML = "";
+		for (var maoId in jogadores[jogadorPrincipal].mao) {
+			minhaMao.innerHTML += desenharCarta(jogadores[jogadorPrincipal].mao[maoId]);
+		}
 		jogar();
 	}
 }
