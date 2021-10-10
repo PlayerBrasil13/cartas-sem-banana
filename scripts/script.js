@@ -457,7 +457,6 @@ function escolherCor(corEscolher, cartaEscolher) {
 		entradaInfo.innerHTML = "";
 		for (var cor in cartasCores) {
 			cartaEscolher.cor = cartasCores[cor];
-			logConsole(cartasCores[cor])
 			entradaInfo.innerHTML += `<button type="submit" onclick="escolherCor('${cartasCores[cor]}')">${desenharCarta(cartaEscolher)}</button>`;
 		}
 	} else {
