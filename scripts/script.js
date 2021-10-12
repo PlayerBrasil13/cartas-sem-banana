@@ -85,6 +85,7 @@ function comecarJogo() {
 
 	jogar();
 
+	minhaMao.innerHTML = null;
 	for (var maoId in jogadores[jogadorPrincipal].mao) {
 		minhaMao.innerHTML += desenharCarta(jogadores[jogadorPrincipal].mao[maoId]);
 	}
@@ -159,7 +160,7 @@ function criarCartas() {
 			id: idCarta,
 			nome: "",
 			tipo: "trocarCor",
-			cor: "escolherCor"
+			cor: "000000"
 		});
 		idCarta++;
 	}
@@ -169,7 +170,7 @@ function criarCartas() {
 			id: idCarta,
 			nome: "+4",
 			tipo: "+4",
-			cor: "escolherCor"
+			cor: "000000"
 		});
 		idCarta++;
 	}
@@ -197,9 +198,6 @@ function distribuirCartas() {
 
 function desenharCarta(carta) {
 	if (carta != undefined) {
-		if (carta.cor == "escolherCor") {
-			carta.cor = "000000";
-		}
 		return `
 			<div class="carta-fundo" style="background: #${carta.cor};">
 				<div class="carta-retangulo">
@@ -248,6 +246,10 @@ function desenharCartoes(comInput) {
 }
 
 function jogar() {
+	minhaMao.innerHTML = ""
+	for (var maoId in jogadores[jogadorPrincipal].mao) {
+		minhaMao.innerHTML += desenharCarta(jogadores[jogadorPrincipal].mao[maoId]);
+	}
 	jogadorAtual += rodadaProgressao;
 	jogadorAtual = (jogadorAtual + jogadores.length) % jogadores.length;
 
@@ -326,16 +328,16 @@ function checarvalidade(carta) {
 	var cartaBaralho = baralhoAuxiliar[baralhoAuxiliar.length - 1];
 
 	if (
-		baralhoAuxiliar.length == 0 ||
-		baralhoAuxiliar.length == 0 ||
-		baralhoAuxiliar.length == 0 ||
-		baralhoAuxiliar.length == 0 ||
-		baralhoAuxiliar.length == 0 ||
-		baralhoAuxiliar.length == 0 ||
-		baralhoAuxiliar.length == 0 ||
-		(cartaMao.cor == "000000" && sequenciaComprar == 0) ||
-		(cartaMao.cor == cartaBaralho.cor && ((cartaBaralho.nome != "+2" && cartaBaralho.nome != "+4") || sequenciaComprar == 0)) ||
-		cartaMao.nome == cartaBaralho.nome
+		baralhoAuxiliar.length == 0 || (
+			sequenciaComprar == 0 && (
+				cartaMao.cor == cartaBaralho.cor ||
+				cartaMao.nome == cartaBaralho.nome ||
+				cartaMao.cor == "000000"
+			)
+		) || (
+			sequenciaComprar != 0 &&
+			cartaMao.nome == cartaBaralho.nome
+		)
 	) {
 		return true;
 	} else {
@@ -359,19 +361,18 @@ function comprarCarta(checar) {
 	if (haValidas) {
 		saidaInfo.innerHTML = "Não é possível comprar cartas, há cartas válidas!"
 	} else {
-		if (sequenciaComprar == 0) { sequenciaComprar++; }
+		var jogarApos = false;
+		if (sequenciaComprar == 0) { sequenciaComprar++; } else { jogarApos = true; }
 		while (sequenciaComprar > 0) {
 			jogadores[jogadorAtual].mao.splice(0, 0, baralhoPrincipal.splice(0, 1)[0]);
-
-			minhaMao.innerHTML = ""
-			for (var maoId in jogadores[jogadorAtual].mao) {
-				minhaMao.innerHTML += desenharCarta(jogadores[jogadorPrincipal].mao[maoId]);
-			}
-
 			sequenciaComprar--;
 		}
+		minhaMao.innerHTML = ""
+		for (var maoId in jogadores[jogadorPrincipal].mao) {
+			minhaMao.innerHTML += desenharCarta(jogadores[jogadorPrincipal].mao[maoId]);
+		}
 		cartoesJogadores.innerHTML = desenharCartoes(false);
-		jogar();
+		if (jogarApos) { jogar(); }
 	}
 }
 
@@ -443,10 +444,6 @@ function trocarMaos() {
 		}
 	}
 	if (maoMovida != "no") {
-		minhaMao.innerHTML = "";
-		for (var maoId in jogadores[jogadorPrincipal].mao) {
-			minhaMao.innerHTML += desenharCarta(jogadores[jogadorPrincipal].mao[maoId]);
-		}
 		jogar();
 	}
 }
