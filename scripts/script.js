@@ -393,7 +393,6 @@ function funcaoCarta(carta) {
 			}
 			break;
 		case "reverter":
-			jogadorAtual -= 2;
 			rodadaProgressao = rodadaProgressao * (-1);
 			jogar();
 			break;
