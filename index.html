@@ -19,18 +19,20 @@
 				Jogo de cartas
 			</h1>
 			
-			<div id="botaoDebug">
+			<!-- <div id="botaoDebug">
 				<button type="submit" onclick="debug(0)">DeBuG</button>
-			</div>
+			</div> -->
 			
 			<div class="info" id="saidaInfo">
-				<h2>Escolha a semente</h2>
+				<h2>Escolha a semente ou cole o código de salvamento</h2>
 			</div>
 			<div class="info" id="mesa"></div>
 			<div id="cartoesJogadores" class="caixa-flex"></div>
 			<div id="entradaInfo">
 				<input class="textInput" type="number" id="pegarSemente" placeholder="Deixe em branco para semente aleatória">
-				<button type="submit" onclick="escolherSemente(document.getElementById('pegarSemente').value)">Ok</button>
+				<button type="submit" onclick="escolherSemente(document.getElementById('pegarSemente').value)">Ok</button><br>
+				<input class="textInput" type="text" id="pegarSave" placeholder="Cole o código de salvamento aqui">
+				<button type="submit" onclick="carregarJogo()">Ok</button>
 			</div>
 			<div class="caixa-flex" id="minhaMao"></div>
 			

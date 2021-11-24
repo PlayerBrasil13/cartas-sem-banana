@@ -10,7 +10,7 @@ var jogadorAtual = NaN;
 var rodadaProgressao = 1;
 
 var baralhoAuxiliar = []; // Baralho da mesa
-var baralhoPrincipal; // Baralho de compras
+var baralhoPrincipal = []; // Baralho de compras
 
 var sequenciaComprar = 0;
 
@@ -30,7 +30,7 @@ function adicionarJogador(numeroJogador) {
 	if (numeroJogador == 1) {
 		entradaInfo.innerHTML = `
 		<button type="submit" onclick="adicionarJogador(${numeroJogador + 1})">Adicionar jogador</button>
-		<button type="submit" onclick="escolherJogador('comecarJogo()')">Continuar</button><br>
+		<button type="submit" onclick="escolherJogador()">Continuar</button><br>
 		<input class="textInput" type="text" id="jogadorNome" placeholder="Jogador ${numeroJogador}" maxlength="8">
 		`;
 	}
@@ -46,7 +46,7 @@ function adicionarJogador(numeroJogador) {
 
 		entradaInfo.innerHTML = `
 		<button type="submit" onclick="adicionarJogador(${numeroJogador + 1})">Adicionar jogador</button>
-		<button type="submit" onclick="escolherJogador('comecarJogo()')">Continuar</button><br>
+		<button type="submit" onclick="escolherJogador()">Continuar</button><br>
 		<input class="textInput" type="text" id="jogadorNome" placeholder="Jogador ${numeroJogador}" maxlength="8">
 		`;
 	}
@@ -463,6 +463,82 @@ function escolherCor(corEscolher, cartaEscolher) {
 
 		jogar();
 	}
+}
+
+function salvarJogo() {
+	var saveFileArray = [];
+	var salvarJogador;
+
+	saveFileArray.push(semente);
+	saveFileArray.push(jogadorAtual);
+	saveFileArray.push(rodadaProgressao);
+	saveFileArray.push(sequenciaComprar);
+
+	salvarJogador = jogadores;
+	saveFileArray.push(salvarJogador.length);
+	while (salvarJogador.length > 0) {
+		saveFileArray.push(salvarJogador[0].nome);
+		salvarId(salvarJogador[0].mao);
+		salvarJogador.splice(0, 1);
+	}
+
+	salvarId(baralhoPrincipal);
+	salvarId(baralhoAuxiliar);
+
+	function salvarId(deMao) {
+		saveFileArray.push(deMao.length);
+		while (deMao.length > 0) {
+			saveFileArray.push(deMao[0].id);
+			deMao.splice(0, 1);
+		}
+	}
+
+	var saveFile = "";
+	console.log(saveFileArray.length)
+	while (saveFileArray.length > 0) {
+		saveFile += saveFileArray.splice(0, 1)[0];
+		saveFile += "| |"
+	}
+
+	saidaInfo.innerHTML = saveFile;
+}
+
+function carregarJogo() {
+	var saveFile = document.getElementById("pegarSave").value;
+	// var saveFile = "1358| |1| |1| |0| |2| |coc| |7| |29| |86| |7| |83| |85| |56| |50| |suc| |7| |46| |36| |20| |15| |35| |43| |62| |94| |71| |28| |80| |42| |19| |39| |63| |99| |94| |74| |101| |33| |60| |11| |23| |55| |96| |8| |2| |92| |40| |37| |9| |82| |12| |75| |103| |22| |14| |3| |31| |54| |25| |64| |34| |13| |84| |100| |0| |24| |61| |59| |90| |1| |57| |44| |72| |32| |17| |93| |70| |41| |26| |78| |106| |89| |91| |76| |97| |4| |30| |107| |10| |52| |6| |27| |67| |102| |5| |104| |105| |49| |18| |16| |45| |53| |38| |51| |48| |58| |77| |87| |81| |65| |79| |47| |95| |21| |88| |66| |68| |69| |73| |98| |0| |";
+
+	var saveFileArray = saveFile.split("| |");
+
+	semente = parseInt(saveFileArray.splice(0, 1)[0]);
+	jogadorAtual = parseInt(saveFileArray.splice(0, 1)[0]);
+	rodadaProgressao = parseInt(saveFileArray.splice(0, 1)[0]);
+	sequenciaComprar = parseInt(saveFileArray.splice(0, 1)[0]);
+
+	cartas = criarCartas();
+
+	var numeroJogadores = parseInt(saveFileArray.splice(0, 1)[0]);
+	
+
+	while (jogadores.length < numeroJogadores) {
+		var construirJogador = {};
+		var construirMao = [];
+		construirJogador.nome = saveFileArray.splice(0, 1)[0];
+		carregarId(construirMao);
+		construirJogador.mao = construirMao;
+
+		jogadores.push(construirJogador);
+	}
+	
+	carregarId(baralhoPrincipal)
+	carregarId(baralhoAuxiliar)
+
+	function carregarId(paraMao) {
+		var numeroCartas = parseInt(saveFileArray.splice(0, 1)[0]);
+		while (paraMao.length < numeroCartas) {
+			paraMao.push(cartas[parseInt(saveFileArray.splice(0, 1)[0])]);
+		}
+	}
+	escolherJogador()
 }
 
 
